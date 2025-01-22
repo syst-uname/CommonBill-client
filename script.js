@@ -15,6 +15,36 @@ document.addEventListener('DOMContentLoaded', function () {
   console.log('==== 02 location.hash.toString(): ', location.hash.toString())
   console.log('==== 03')
 
+  let tg = window.Telegram.WebApp
+
+  // главная кнопка
+  tg.MainButton.show();
+  tg.MainButton.setText('Главная кнопка (отправить)');
+  tg.MainButton.onClick(() => {
+    console.log('==== Главная кнопка Clicked 02')
+    tg.sendData({ data: 1, text: 'Главная кнопка Clicked' });
+  });
+
+
+  tg.onEvent('mainButtonClicked', function () {
+    console.log('==== mainButtonClicked 01')
+    tg.sendData({ data: 2, text: 'mainButtonClicked ' });
+  });
+
+
+
+  document.getElementById('testButton').addEventListener('click', function () {
+    tg.setHeaderColor('#fcb69f')
+    console.log(tg)
+  });
+
+  document.getElementById('testButton2').addEventListener('click', function () {
+    tg.close()
+  });
+
+
+
+
   fetch('https://jsonplaceholder.typicode.com/todos')
     .then(response => response.json())
     .then(tasks => {
