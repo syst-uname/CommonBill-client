@@ -17,7 +17,8 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
   document.getElementById('testButton2').addEventListener('click', function () {
-    tg.close()
+    tg.sendData(JSON.stringify({ type: 'secondButtonClicked', value: '2', cost: 'data new' }));
+    // tg.close()
   });
 
 
