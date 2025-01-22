@@ -1,33 +1,19 @@
 document.addEventListener('DOMContentLoaded', function () {
-  const taskList = document.getElementById('task-list');
-
-  let text;
-  if (window.Telegram && window.Telegram.WebApp) {
-    window.Telegram.WebApp.ready();
-    const initData = window.Telegram.WebApp.initDataUnsafe;
-    text = JSON.stringify(initData);
-    console.log('==== 00: ')
-    console.log(initData)
-  } else {
-    text = 'Not running inside Telegram Web App';
-  }
-  console.log('==== 01 text: ', text)
-  console.log('==== 02 location.hash.toString(): ', location.hash.toString())
-  console.log('==== 03')
 
   let tg = window.Telegram.WebApp
+  console.log('==== tg')
+  console.log(tg)
 
   // главная кнопка
   tg.MainButton.show();
-  tg.MainButton.setText('Главная кнопка (отправить)');
+  tg.MainButton.setText('Отправить');
   tg.MainButton.onClick(() => {
-    console.log('==== Главная кнопка Clicked 02')
-    tg.sendData('Данные клиента: Главная кнопка Clicked');
+    console.log('==== Главная кнопка Clicked')
+    tg.sendData(JSON.stringify({ type: 'mainButtonClicked', value: '1', cost: 'data' }));
   });
 
   document.getElementById('testButton').addEventListener('click', function () {
     tg.setHeaderColor('#fcb69f')
-    console.log(tg)
   });
 
   document.getElementById('testButton2').addEventListener('click', function () {
@@ -35,11 +21,15 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
 
+  // Список задач
   const tasks = [
     { id: 1, title: 'Задача 1', completed: false },
     { id: 2, title: 'Задача 2', completed: true },
     { id: 3, title: 'Задача 3', completed: false }
   ]
+
+  const taskList = document.getElementById('task-list');
+
   tasks.forEach(task => {
     const taskCard = document.createElement('div');
     taskCard.classList.add('col-md-4', 'task-card');
