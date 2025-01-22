@@ -1,14 +1,14 @@
 document.addEventListener('DOMContentLoaded', function () {
 
   let tg = window.Telegram.WebApp
-  console.log('==== tg')
-  console.log(tg)
+  console.log('==== tg', tg)
 
   // главная кнопка
   tg.MainButton.show();
   tg.MainButton.setText('Отправить');
   tg.MainButton.onClick(() => {
     console.log('==== Главная кнопка Clicked')
+    tg.ready();
     tg.sendData(JSON.stringify({ type: 'mainButtonClicked', value: '1', cost: 'data' }));
   });
 
