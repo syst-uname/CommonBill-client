@@ -6,6 +6,8 @@ document.addEventListener('DOMContentLoaded', function () {
     window.Telegram.WebApp.ready();
     const initData = window.Telegram.WebApp.initDataUnsafe;
     text = JSON.stringify(initData);
+    console.log('==== 00: ')
+    console.log(initData)
   } else {
     text = 'Not running inside Telegram Web App';
   }
