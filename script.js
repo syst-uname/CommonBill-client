@@ -89,23 +89,3 @@ async function checkAndUpdateCache() {
     }
   }
 }
-
-// Данные конфига
-// async function getConfig() {
-//   try {
-//     const response = await fetch('config.json')
-//     const config = await response.json()
-//     console.log('==== config', config)
-//     return config
-//   } catch (error) {
-//     // чтение из env
-
-//     console.log('==== файл не считан',)
-//     console.log('==== env meta', import.meta)
-//     console.log('==== env env', import.meta?.env)
-//     console.log('==== env key', import.meta?.env?.SERVER_URL)
-
-//     // console.error('Ошибка при загрузке настроек:', error)
-//     // return null
-//   }
-// }
