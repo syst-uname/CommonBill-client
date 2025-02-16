@@ -29,7 +29,7 @@ async function fetchParams() {
       type: 'getParams',
       userId: 20
     }
-    const response = await fetch(config.BOT_SERVER_URL, {
+    const response = await fetch(config.SERVER_URL, {
       method: 'POST',
       body: JSON.stringify(body),
     })
@@ -102,7 +102,7 @@ async function getConfig() {
     console.log('==== файл не считан',)
     console.log('==== env meta', import.meta)
     console.log('==== env env', import.meta?.env)
-    console.log('==== env key', import.meta?.env?.SECRET1)
+    console.log('==== env key', import.meta?.env?.SERVER_URL)
 
     // console.error('Ошибка при загрузке настроек:', error)
     // return null
