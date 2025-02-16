@@ -1,3 +1,5 @@
+import config from './config.js'
+
 document.addEventListener('DOMContentLoaded', function () {
 
   let tg = window.Telegram.WebApp
@@ -24,7 +26,6 @@ document.addEventListener('DOMContentLoaded', function () {
 // Получение параметров страницы 
 async function fetchParams() {
   try {
-    const config = await getConfig();
     const body = {
       type: 'getParams',
       userId: 20
@@ -89,22 +90,22 @@ async function checkAndUpdateCache() {
   }
 }
 
-// Данные конфига  
-async function getConfig() {
-  try {
-    const response = await fetch('config.json')
-    const config = await response.json()
-    console.log('==== config', config)
-    return config
-  } catch (error) {
-    // чтение из env 
+// Данные конфига
+// async function getConfig() {
+//   try {
+//     const response = await fetch('config.json')
+//     const config = await response.json()
+//     console.log('==== config', config)
+//     return config
+//   } catch (error) {
+//     // чтение из env
 
-    console.log('==== файл не считан',)
-    console.log('==== env meta', import.meta)
-    console.log('==== env env', import.meta?.env)
-    console.log('==== env key', import.meta?.env?.SERVER_URL)
+//     console.log('==== файл не считан',)
+//     console.log('==== env meta', import.meta)
+//     console.log('==== env env', import.meta?.env)
+//     console.log('==== env key', import.meta?.env?.SERVER_URL)
 
-    // console.error('Ошибка при загрузке настроек:', error)
-    // return null
-  }
-}
+//     // console.error('Ошибка при загрузке настроек:', error)
+//     // return null
+//   }
+// }
