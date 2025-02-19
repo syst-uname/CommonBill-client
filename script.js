@@ -1,5 +1,3 @@
-import config from './config.js'
-
 document.addEventListener('DOMContentLoaded', function () {
 
   let tg = window.Telegram.WebApp
@@ -23,14 +21,38 @@ document.addEventListener('DOMContentLoaded', function () {
 
 });
 
+// конфиг 
+async function getConfig() {
+  if (window.location.search) {
+    const urlParams = new URLSearchParams(window.location.search);
+    const config = {
+      SERVER_ID: urlParams.get('sid')
+    }
+    console.log('==== конфиг из window.location.search', config)
+    return config
+  } else {
+    try {
+      const response = await fetch('config.json')
+      const data = await response.json()
+      console.log('==== конфиг из json', data)
+      return data
+    } catch (error) {
+      console.error('Ошибка при загрузке конфига:', error)
+      return null
+    }
+  }
+}
+
 // Получение параметров страницы 
 async function fetchParams() {
+  const config = await getConfig()
   try {
+    const url = `https://script.google.com/macros/s/${config.SERVER_ID}/exec`
     const body = {
       type: 'getParams',
       userId: 20
     }
-    const response = await fetch(config.SERVER_URL, {
+    const response = await fetch(url, {
       method: 'POST',
       body: JSON.stringify(body),
     })
