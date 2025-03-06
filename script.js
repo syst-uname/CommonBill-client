@@ -7,22 +7,25 @@ document.addEventListener('DOMContentLoaded', async function () {
   console.log('==== tg', tg)
 
   // цвет темы
-  const theme = window.Telegram.WebApp.theme ? window.Telegram.WebApp.theme : window.config.THEME
+  const theme = window.Telegram.WebApp.colorScheme ?? window.config.THEME
   document.body.setAttribute('data-bs-theme', theme);
 
   // главная кнопка
   tg.MainButton.show();
-  tg.MainButton.setText('Отправить');
+  tg.MainButton.setText('Добавить');
   tg.MainButton.onClick(() => {
-    console.log('==== Главная кнопка Clicked')
-    tg.ready();
-    tg.sendData(JSON.stringify({ type: 'mainButtonClicked', value: '1', cost: 'data' }));
+    sendData();
   });
+
+  // вторая кнопка только в локальном тесте 
+  if (window.config.ENV === 'local') {
+    document.getElementById('local-submit-button').style.display = 'inline-block'
+  }
 
   checkAndUpdateCache();
 });
 
-document.getElementById('submit-button').addEventListener('click', (event) => {
+document.getElementById('local-submit-button').addEventListener('click', (event) => {
   event.preventDefault();
   sendData();
 });
@@ -82,7 +85,7 @@ async function fetchParams() {
   }
 }
 
-// Обновление страницы по параметрам из экселя 
+// Обновление страницы по параметрам из excel 
 function updatePage(params) {
 
   try {
@@ -90,7 +93,7 @@ function updatePage(params) {
 
     // Валюты  
     const currList = document.getElementById('curr-list');
-    // currList.innerHTML = '';    // чтобы не двоились значения когда подгрузятся новые данные // нет, очищает и само поле ввода  
+    // currList.innerHTML = '';    // чтобы не двоились значения когда погрузятся новые данные // нет, очищает и само поле ввода  
     params.currs.forEach(curr => {
       // input элемент
       const input = document.createElement('input');
@@ -99,6 +102,7 @@ function updatePage(params) {
       input.name = 'curr';
       input.id = input.name + '-' + curr.id;
       input.value = curr.id;
+      input.checked = curr.checked;
 
       // label к нему
       const label = document.createElement('label');

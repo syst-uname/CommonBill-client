@@ -7,6 +7,12 @@
   <title>Общие траты</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+  <style>
+    /* локальная кнопка отправить сначала не видна  */
+    #local-submit-button {
+      display: none;
+    }
+  </style>
 </head>
 
 <body>
@@ -54,15 +60,10 @@
         </div>
       </div>
 
-      <!-- Главная кнопка Добавить -->
+      <!-- Локальная кнопка Добавить -->
       <div class="d-grid mt-4">
-        <button id="submit-button" class="btn btn-primary">Добавить</button>
+        <button id="local-submit-button" class="btn btn-primary">Добавить</button>
       </div>
-
-      <!-- <div id="data-container">Loading...</div> -->
-
-      <!-- <button id="testButton" type="submit" class="btn btn-primary">Цвет</button>
-  <button id="testButton2" type="submit" class="btn btn-primary">Закрыть</button> -->
 
     </form>
   </div>
