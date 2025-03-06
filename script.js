@@ -1,7 +1,14 @@
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', async function () {
+
+  // общий конфиг   
+  window.config = await getConfig()
 
   let tg = window.Telegram.WebApp
   console.log('==== tg', tg)
+
+  // цвет темы
+  const theme = window.Telegram.WebApp.theme ? window.Telegram.WebApp.theme : window.config.THEME
+  document.body.setAttribute('data-bs-theme', theme);
 
   // главная кнопка
   tg.MainButton.show();
@@ -12,13 +19,23 @@ document.addEventListener('DOMContentLoaded', function () {
     tg.sendData(JSON.stringify({ type: 'mainButtonClicked', value: '1', cost: 'data' }));
   });
 
-  document.getElementById('testButton2').addEventListener('click', function () {
-    tg.sendData(JSON.stringify({ type: 'secondButtonClicked', value: '2', cost: 'data new' }));
-    // tg.close()
-  });
-
   checkAndUpdateCache();
+});
 
+document.getElementById('submit-button').addEventListener('click', (event) => {
+  event.preventDefault();
+  sendData();
+});
+
+// Выделить все валюты/снять выделение 
+document.getElementById('selectAllUsersUse').addEventListener('click', (event) => {
+  const users = document.querySelectorAll('input[name="usersUse"]');
+  users.forEach(user => user.checked = true);
+});
+
+document.getElementById('deselectAllUsersUse').addEventListener('click', (event) => {
+  const users = document.querySelectorAll('input[name="usersUse"]');
+  users.forEach(user => user.checked = false);
 });
 
 // конфиг 
@@ -45,12 +62,12 @@ async function getConfig() {
 
 // Получение параметров страницы 
 async function fetchParams() {
-  const config = await getConfig()
   try {
-    const url = `https://script.google.com/macros/s/${config.SERVER_ID}/exec`
+    const userId = window.Telegram.WebApp.initDataUnsafe.user ? window.Telegram.WebApp.initDataUnsafe.user.id : window.config.USER_ID
+    const url = `https://script.google.com/macros/s/${window.config.SERVER_ID}/exec`
     const body = {
       type: 'getParams',
-      userId: 20
+      userId: userId
     }
     const response = await fetch(url, {
       method: 'POST',
@@ -67,26 +84,78 @@ async function fetchParams() {
 
 // Обновление страницы по параметрам из экселя 
 function updatePage(params) {
-  try {
-    // Очищаем список перед добавлением новых данных
-    const dataList = document.getElementById('task-list');
-    dataList.innerHTML = '';
 
-    // Добавляем данные в список
+  try {
+    document.title = params.title;
+
+    // Валюты  
+    const currList = document.getElementById('curr-list');
+    // currList.innerHTML = '';    // чтобы не двоились значения когда подгрузятся новые данные // нет, очищает и само поле ввода  
     params.currs.forEach(curr => {
-      const currencyCard = document.createElement('div');
-      currencyCard.classList.add('col-md-4');
-      currencyCard.innerHTML = `
-          <div class="card">
-            <div class="card-body">
-              <p class="card-title">${curr.id}: ${curr.title}</p>
-            </div>
-          </div>
-        `;
-      dataList.appendChild(currencyCard);
+      // input элемент
+      const input = document.createElement('input');
+      input.type = 'radio';
+      input.classList.add('btn-check');
+      input.name = 'curr';
+      input.id = input.name + '-' + curr.id;
+      input.value = curr.id;
+
+      // label к нему
+      const label = document.createElement('label');
+      label.classList.add('btn', 'btn-outline-secondary');
+      label.htmlFor = input.id;
+      label.textContent = curr.title;
+
+      currList.appendChild(input);
+      currList.appendChild(label);
     });
+
+    // Заплатил 
+    const userPayList = document.getElementById('userPay-list');
+    userPayList.innerHTML = '';
+    params.users.forEach(user => {
+      // input элемент
+      const input = document.createElement('input');
+      input.type = 'radio';
+      input.classList.add('btn-check');
+      input.name = 'userPay';
+      input.id = input.name + '-' + user.id;
+      input.value = user.id;
+
+      // label к нему
+      const label = document.createElement('label');
+      label.classList.add('btn', 'btn-outline-secondary');
+      label.htmlFor = input.id;
+      label.textContent = user.title;
+
+      userPayList.appendChild(input);
+      userPayList.appendChild(label);
+    });
+
+    // Пользовались 
+    const usersUseList = document.getElementById('usersUse-list');
+    usersUseList.innerHTML = '';
+    params.users.forEach(user => {
+      // input элемент
+      const input = document.createElement('input');
+      input.type = 'checkbox';
+      input.classList.add('btn-check');
+      input.name = 'usersUse';
+      input.id = input.name + '-' + user.id;
+      input.value = user.id;
+
+      // label к нему
+      const label = document.createElement('label');
+      label.classList.add('btn', 'btn-outline-secondary');
+      label.htmlFor = input.id;
+      label.textContent = user.title;
+
+      usersUseList.appendChild(input);
+      usersUseList.appendChild(label);
+    });
+
   } catch (error) {
-    console.error('Ошибка при загрузке данных:', error);
+    console.error('Ошибка при формировании страницы:', error);
   }
 }
 
@@ -99,6 +168,8 @@ async function checkAndUpdateCache() {
     updatePage(JSON.parse(cachedParams));
   }
 
+  // return  // TODO: вернуть, чтобы не делал постоянные запросы 
+
   // Получаем новые данные
   const newParams = await fetchParams();
   if (newParams) {
@@ -110,4 +181,50 @@ async function checkAndUpdateCache() {
       updatePage(newParams);
     }
   }
+}
+
+// отправка данных
+async function sendData() {
+  try {
+    const form = document.getElementById('form-payload');
+    const formData = new FormData(form);
+    const data = formDataToObject(formData)
+
+    const userId = window.Telegram.WebApp.initDataUnsafe.user ? window.Telegram.WebApp.initDataUnsafe.user.id : window.config.USER_ID   // куда-то выделить
+
+    const url = `https://script.google.com/macros/s/${window.config.SERVER_ID}/exec`
+    const body = {
+      type: 'putData',
+      userId: userId,
+      payload: data
+    }
+
+    console.log('==== body для отправки', body)
+
+    const response = await fetch(url, {
+      method: 'POST',
+      body: JSON.stringify(body),
+    })
+    const dataResponse = await response.json()
+    console.log('==== отправка данных', dataResponse)
+    return dataResponse
+  } catch (error) {
+    console.error('Ошибка при отправке данных:', error)
+    return null
+  }
+}
+
+function formDataToObject(formData) {
+  const obj = {};
+  formData.forEach((value, key) => {
+    if (obj.hasOwnProperty(key)) {
+      if (!Array.isArray(obj[key])) {
+        obj[key] = [obj[key]];
+      }
+      obj[key].push(value);
+    } else {
+      obj[key] = value;
+    }
+  });
+  return obj;
 }
