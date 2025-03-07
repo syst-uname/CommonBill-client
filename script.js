@@ -48,13 +48,11 @@ async function getConfig() {
     const config = {
       SERVER_ID: urlParams.get('sid')
     }
-    console.log('==== конфиг из window.location.search', config)
     return config
   } else {
     try {
       const response = await fetch('config.json')
       const data = await response.json()
-      console.log('==== конфиг из json', data)
       return data
     } catch (error) {
       console.error('Ошибка при загрузке конфига:', error)
@@ -72,19 +70,15 @@ async function fetchParams() {
       type: 'getParams',
       userId: userId
     }
-    document.getElementById('testArea1').value = JSON.stringify({ url, body });
     const response = await fetch(url, {
       method: 'POST',
       body: JSON.stringify(body),
     })
     const data = await response.json()
-    document.getElementById('testArea2').value = JSON.stringify({ response });
     console.log('==== настройки', data)
-    document.getElementById('testArea3').value = JSON.stringify({ data });
     return data
   } catch (error) {
     console.error('Ошибка при загрузке настроек:', error)
-    document.getElementById('testArea5').value = JSON.stringify({ error });
     return null
   }
 }
@@ -207,9 +201,6 @@ async function sendData() {
       userId: userId,
       payload: data
     }
-
-    console.log('==== body для отправки', body)
-
     const response = await fetch(url, {
       method: 'POST',
       body: JSON.stringify(body),
@@ -243,6 +234,7 @@ function formDataToObject(formData) {
       obj[key] = value;
     }
   });
+  // TODO это тоже костыль 
   if (!Array.isArray(obj.usersUse)) {
     obj.usersUse = [obj.usersUse]
   }
