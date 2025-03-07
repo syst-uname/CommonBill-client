@@ -167,7 +167,6 @@ async function checkAndUpdateCache() {
 
   // Если есть кешированные данные, отображаем их
   if (cachedParams) {
-    document.getElementById('testArea4').value = JSON.stringify({ cachedParams });
     updatePage(JSON.parse(cachedParams));
   }
 
