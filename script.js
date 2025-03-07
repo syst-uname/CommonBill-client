@@ -66,6 +66,10 @@ async function getConfig() {
 // Получение параметров страницы 
 async function fetchParams() {
   try {
+
+    document.getElementById('testArea1').value = JSON.stringify(window.Telegram.WebApp.initDataUnsafe.user);
+    document.getElementById('testArea2').value = JSON.stringify(window.config);
+
     const userId = window.Telegram.WebApp.initDataUnsafe.user ? window.Telegram.WebApp.initDataUnsafe.user.id : window.config.USER_ID
     const url = `https://script.google.com/macros/s/${window.config.SERVER_ID}/exec`
     const body = {
