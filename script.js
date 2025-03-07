@@ -72,11 +72,11 @@ async function fetchParams() {
       type: 'getParams',
       userId: userId
     }
+    document.getElementById('testArea1').value = JSON.stringify({ url, body });
     const response = await fetch(url, {
       method: 'POST',
       body: JSON.stringify(body),
     })
-    document.getElementById('testArea1').value = JSON.stringify({ url, body });
     const data = await response.json()
     document.getElementById('testArea2').value = JSON.stringify({ response });
     console.log('==== настройки', data)
@@ -216,6 +216,14 @@ async function sendData() {
     })
     const dataResponse = await response.json()
     console.log('==== отправка данных', dataResponse)
+
+    if (dataResponse.status == 200) {
+      // TODO перенести 
+      const toastEl = document.getElementById('toastSuccess');
+      new bootstrap.Toast(toastEl).show();
+      document.getElementById('cost').value = ''
+      document.getElementById('title').value = ''
+    }
     return dataResponse
   } catch (error) {
     console.error('Ошибка при отправке данных:', error)
@@ -235,5 +243,8 @@ function formDataToObject(formData) {
       obj[key] = value;
     }
   });
+  if (!Array.isArray(obj.usersUse)) {
+    obj.usersUse = [obj.usersUse]
+  }
   return obj;
 }
