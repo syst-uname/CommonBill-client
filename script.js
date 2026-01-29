@@ -87,7 +87,7 @@ async function fetchParams() {
 function updatePage(params) {
 
   try {
-    document.title = params.title;
+    document.getElementById('form-title').textContent = params.title;
 
     // Валюты  
     const currList = document.getElementById('curr-list');
@@ -200,6 +200,7 @@ async function sendData() {
       userId: userId,
       payload: data
     }
+
     const response = await fetch(url, {
       method: 'POST',
       body: JSON.stringify(body),
