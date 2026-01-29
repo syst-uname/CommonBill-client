@@ -87,11 +87,14 @@ async function fetchParams() {
 function updatePage(params) {
 
   try {
+    // заголовок
     document.getElementById('form-title').textContent = params.title;
+
+    // удаляем предыдущие элементы-настройки
+    document.querySelectorAll('[data-removable]').forEach(el => el.remove());  // относится к dataset.removable
 
     // Валюты  
     const currList = document.getElementById('curr-list');
-    // currList.innerHTML = '';    // чтобы не двоились значения когда погрузятся новые данные // нет, очищает и само поле ввода  
     params.currs.forEach(curr => {
       // input элемент
       const input = document.createElement('input');
@@ -101,12 +104,14 @@ function updatePage(params) {
       input.id = input.name + '-' + curr.id;
       input.value = curr.id;
       input.checked = curr.checked;
+      input.dataset.removable = 'true';
 
       // label к нему
       const label = document.createElement('label');
       label.classList.add('btn', 'btn-outline-secondary');
       label.htmlFor = input.id;
       label.textContent = curr.title;
+      label.dataset.removable = 'true';
 
       currList.appendChild(input);
       currList.appendChild(label);
