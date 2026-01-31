@@ -263,3 +263,13 @@ function showToast(message, type='success') {
   }
   new bootstrap.Toast(toast).show();
 }
+
+function showLog(data) {
+  const testArea = document.getElementById('testArea');
+  const formattedText = typeof data === 'object'
+      ? JSON.stringify(data, null, 2)
+      : String(data);
+
+  testArea.textContent += '\n' + formattedText;
+  testArea.scrollTop = testArea.scrollHeight;
+}
