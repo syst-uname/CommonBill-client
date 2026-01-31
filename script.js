@@ -78,6 +78,7 @@ async function fetchParams() {
     console.log('==== настройки', data)
     return data
   } catch (error) {
+    showToast(`Ошибка при загрузке настроек: ${error.message}`, 'error')
     console.error('Ошибка при загрузке настроек:', error)
     return null
   }
@@ -168,25 +169,32 @@ function updatePage(params) {
 
 // Проверка и обновления кеша
 async function checkAndUpdateCache() {
-  const cachedParams = localStorage.getItem('cachedParams');
+  try {
+    const cachedParams = localStorage.getItem('cachedParams');
 
-  // Если есть кешированные данные, отображаем их
-  if (cachedParams) {
-    updatePage(JSON.parse(cachedParams));
-  }
-
-  // return  // TODO: вернуть, чтобы не делал постоянные запросы 
-
-  // Получаем новые данные
-  const newParams = await fetchParams();
-  if (newParams) {
-    const newParamsString = JSON.stringify(newParams);
-
-    // Если данные изменились, обновляем кеш и страницу
-    if (!cachedParams || newParamsString !== cachedParams) {
-      localStorage.setItem('cachedParams', newParamsString);
-      updatePage(newParams);
+    // Если есть кешированные данные, отображаем их
+    if (cachedParams) {
+      updatePage(JSON.parse(cachedParams));
     }
+
+    // return  // TODO: вернуть, чтобы не делал постоянные запросы
+
+    // Получаем новые данные
+    const newParams = await fetchParams();
+    if (newParams) {
+      const newParamsString = JSON.stringify(newParams);
+
+      // Если данные изменились, обновляем кеш и страницу
+      if (!cachedParams || newParamsString !== cachedParams) {
+        localStorage.setItem('cachedParams', newParamsString);
+        updatePage(newParams);
+      }
+    }
+  } catch (error) {
+    showToast(`Ошибка при чтении cache: ${error.message}`, 'error')
+    // могла быть ошибка с JSON.parse(cachedParams), поэтому нужно затереть параметры
+    localStorage.setItem('cachedParams', null);
+    console.error(error);
   }
 }
 
@@ -214,14 +222,13 @@ async function sendData() {
     console.log('==== отправка данных', dataResponse)
 
     if (dataResponse.status == 200) {
-      // TODO перенести 
-      const toastEl = document.getElementById('toastSuccess');
-      new bootstrap.Toast(toastEl).show();
+      showToast(dataResponse.message)
       document.getElementById('cost').value = ''
       document.getElementById('title').value = ''
     }
     return dataResponse
   } catch (error) {
+    showToast(`Ошибка при отправке данных: ${error.message}`, 'error')
     console.error('Ошибка при отправке данных:', error)
     return null
   }
@@ -244,4 +251,15 @@ function formDataToObject(formData) {
     obj.usersUse = [obj.usersUse]
   }
   return obj;
+}
+
+function showToast(message, type='success') {
+  document.getElementById('toastText').textContent = message;
+  const toast = document.getElementById('toast');
+  if (type === 'success') {
+    toast.classList.add('text-bg-success');
+  } else {
+    toast.classList.add('text-bg-danger');
+  }
+  new bootstrap.Toast(toast).show();
 }
