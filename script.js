@@ -255,21 +255,22 @@ function validateData(data) {
 }
 
 function formDataToObject(formData) {
-  const obj = {};
+  // пришлось прописать структуру данных из-за наличия массивов
+  const obj = {
+    title: '',
+    cost: 0,
+    curr: '',
+    userPay: '',
+    usersUse: [],
+  };
+
   formData.forEach((value, key) => {
-    if (obj.hasOwnProperty(key)) {
-      if (!Array.isArray(obj[key])) {
-        obj[key] = [obj[key]];
-      }
+    if (Array.isArray(obj[key])) {
       obj[key].push(value);
     } else {
-      obj[key] = value;
+      obj[key] = value
     }
   });
-  // TODO это тоже костыль 
-  if (!Array.isArray(obj.usersUse)) {
-    obj.usersUse = [obj.usersUse]
-  }
   return obj;
 }
 
