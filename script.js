@@ -204,6 +204,8 @@ async function sendData() {
     const form = document.getElementById('form-payload');
     const formData = new FormData(form);
     const data = formDataToObject(formData)
+    if (!validateData(data))
+      return false
 
     const userId = window.Telegram.WebApp.initDataUnsafe.user ? window.Telegram.WebApp.initDataUnsafe.user.id : window.config.USER_ID   // куда-то выделить
 
@@ -234,6 +236,24 @@ async function sendData() {
   }
 }
 
+// Проверка на полноту данных
+function validateData(data) {
+  const validations = [
+    [!data.title, 'На что вы потратили деньги?'],
+    [!data.cost, 'Какова сумма траты?'],
+    [!data.curr, 'В какой валюте трата?'],
+    [!data.userPay, 'Кто заплатил деньги?'],
+    [!data.usersUse?.length, 'Кто пользовался покупкой?'],
+  ]
+
+  const error = validations.find(([invalid]) => invalid)
+   if (error) {
+    showToast(error[1], 'warning');
+    return false;
+  }
+  return true;
+}
+
 function formDataToObject(formData) {
   const obj = {};
   formData.forEach((value, key) => {
@@ -258,6 +278,8 @@ function showToast(message, type='success') {
   const toast = document.getElementById('toast');
   if (type === 'success') {
     toast.classList.add('text-bg-success');
+  } else if (type === 'warning') {
+    toast.classList.add('text-bg-warning');
   } else {
     toast.classList.add('text-bg-danger');
   }
