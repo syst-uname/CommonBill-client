@@ -78,7 +78,7 @@ async function fetchParams() {
     })
     return await response.json()
   } catch (error) {
-    showToast(`Ошибка при загрузке настроек: ${error.message}`, 'error')
+    showToast(`Ошибка при загрузке настроек: ${error.message}`, 'danger')
     console.error('Ошибка при загрузке настроек:', error)
     return null
   }
@@ -192,7 +192,7 @@ async function checkAndUpdateCache() {
       }
     }
   } catch (error) {
-    showToast(`Ошибка при чтении cache: ${error.message}`, 'error')
+    showToast(`Ошибка при чтении cache: ${error.message}`, 'danger')
     // могла быть ошибка с JSON.parse(cachedParams), поэтому нужно затереть параметры
     localStorage.setItem('cachedParams', null);
     console.error(error);
@@ -230,7 +230,7 @@ async function sendData() {
     }
     return dataResponse
   } catch (error) {
-    showToast(`Ошибка при отправке данных: ${error.message}`, 'error')
+    showToast(`Ошибка при отправке данных: ${error.message}`, 'danger')
     console.error('Ошибка при отправке данных:', error)
     return null
   }
@@ -276,15 +276,15 @@ function formDataToObject(formData) {
 
 function showToast(message, type='success') {
   document.getElementById('toastText').textContent = message;
-  const toast = document.getElementById('toast');
-  if (type === 'success') {
-    toast.classList.add('text-bg-success');
-  } else if (type === 'warning') {
-    toast.classList.add('text-bg-warning');
-  } else {
-    toast.classList.add('text-bg-danger');
-  }
-  new bootstrap.Toast(toast).show();
+  const toastElement = document.getElementById('toast');
+
+  // Удаляем старые классы и добавляем новый
+  toastElement.classList.remove('text-bg-success', 'text-bg-warning', 'text-bg-danger');
+  toastElement.classList.add(`text-bg-${type}`);
+
+  // Получаем существующий экземпляр Toast или создаём новый
+  const toast = bootstrap.Toast.getInstance(toastElement) || new bootstrap.Toast(toastElement);
+  toast.show();
 }
 
 function showLog(data) {
