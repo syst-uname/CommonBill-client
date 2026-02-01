@@ -12,8 +12,12 @@ document.addEventListener('DOMContentLoaded', async function () {
   // главная кнопка
   tg.MainButton.show();
   tg.MainButton.setText('Добавить');
-  tg.MainButton.onClick(() => {
-    sendData();
+  tg.MainButton.onClick(async () => {
+    tg.MainButton.showProgress();
+    tg.MainButton.disable();
+    await sendData();
+    tg.MainButton.hideProgress();
+    tg.MainButton.enable();
   });
 
   // вторая кнопка только в локальном тесте 
