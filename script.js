@@ -188,6 +188,7 @@ async function checkAndUpdateCache() {
       if (!cachedParams || newParamsString !== cachedParams) {
         localStorage.setItem('cachedParams', newParamsString);
         updatePage(newParams);
+        showToast('Успешно загружен новый файл')
       }
     }
   } catch (error) {
