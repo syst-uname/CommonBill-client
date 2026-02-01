@@ -65,6 +65,7 @@ async function getConfig() {
 
 // Получение параметров страницы 
 async function fetchParams() {
+  console.log('Читаю настройки')
   try {
     const userId = window.Telegram.WebApp.initDataUnsafe.user ? window.Telegram.WebApp.initDataUnsafe.user.id : window.config.USER_ID
     const url = `https://script.google.com/macros/s/${window.config.SERVER_ID}/exec`
@@ -76,6 +77,7 @@ async function fetchParams() {
       method: 'POST',
       body: JSON.stringify(body),
     })
+    console.log('Настройки считаны')
     return await response.json()
   } catch (error) {
     showToast(`Ошибка при загрузке настроек: ${error.message}`, 'danger')
