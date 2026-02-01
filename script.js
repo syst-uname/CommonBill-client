@@ -3,8 +3,7 @@ document.addEventListener('DOMContentLoaded', async function () {
   // общий конфиг   
   window.config = await getConfig()
 
-  let tg = window.Telegram.WebApp
-  console.log('==== tg', tg)
+  const tg = window.Telegram.WebApp
 
   // цвет темы
   const theme = window.Telegram.WebApp.colorScheme ?? window.config.THEME
@@ -52,8 +51,7 @@ async function getConfig() {
   } else {
     try {
       const response = await fetch('config.json')
-      const data = await response.json()
-      return data
+      return await response.json()
     } catch (error) {
       console.error('Ошибка при загрузке конфига:', error)
       return null
@@ -68,15 +66,13 @@ async function fetchParams() {
     const url = `https://script.google.com/macros/s/${window.config.SERVER_ID}/exec`
     const body = {
       type: 'getParams',
-      userId: userId
+      userId: String(userId)
     }
     const response = await fetch(url, {
       method: 'POST',
       body: JSON.stringify(body),
     })
-    const data = await response.json()
-    console.log('==== настройки', data)
-    return data
+    return await response.json()
   } catch (error) {
     showToast(`Ошибка при загрузке настроек: ${error.message}`, 'error')
     console.error('Ошибка при загрузке настроек:', error)
@@ -222,7 +218,6 @@ async function sendData() {
       body: JSON.stringify(body),
     })
     const dataResponse = await response.json()
-    console.log('==== отправка данных', dataResponse)
 
     if (dataResponse.status == 200) {
       showToast(dataResponse.message)
